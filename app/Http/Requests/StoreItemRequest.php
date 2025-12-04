@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class StoreItemRequest extends FormRequest
 {
@@ -25,7 +27,23 @@ class StoreItemRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'catalog_ids' => 'required|array',
-            'catalog_ids.*' => 'exists:catalogs,catalog_id'
+            'catalog_ids.*' => 'exists:catalogs,catalog_id',
+
+            'vigente_desde' => 'required|date',
+            'vigente_hasta' => 'required|date|after:vigente_desde',
+            /*
+                'start_at'    => 'required|date|date_format:Y-m-d',
+                'end_at'      => 'required|date|date_format:Y-m-d|after_or_equal:start_at',
+             */
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Errores de validación',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

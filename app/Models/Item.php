@@ -8,10 +8,16 @@ class Item extends Model
 {
     protected $primaryKey = 'item_id';
 
-    protected $fillable = ['title', 'description'];
+    protected $fillable = [
+        'title',
+        'description',
+
+        'vigente_desde',
+        'vigente_hasta',
+    ];
 
     public function catalogs()
     {
-        return $this->belongsToMany(Catalog::class, 'item_catalog','item_id','catalog_id');
+        return $this->belongsToMany(Catalog::class, 'item_catalog', 'item_id', 'catalog_id');
     }
 }

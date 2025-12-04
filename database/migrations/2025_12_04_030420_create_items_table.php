@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id('item_id');
             $table->string('title');
             $table->string('description')->nullable();
+            $table->timestamp('vigente_desde')->nullable();
+            $table->timestamp('vigente_hasta')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ItemRepository;
 use App\Models\Item;
+use Carbon\Carbon;
 
 class ItemService
 {
@@ -13,8 +14,6 @@ class ItemService
     {
         $this->itemRepository = $itemRepository;
     }
-
-
 
     public function getAll()
     {
@@ -54,5 +53,45 @@ class ItemService
     public function delete(Item $item)
     {
         return $this->itemRepository->delete($item);
+    }
+
+    public function getValidItems() //estan en el tiempo vigente
+    {
+        $items = $this->itemRepository->getValidItems();
+
+        // Aquí aplicamos el map para dejar el JSON limpio
+        return $items->map(function ($item) {
+            return [
+                'item_id'     => $item->item_id,
+                'title'       => $item->title,
+                'description' => $item->description,
+                'vigente_desde'    => $item->vigente_desde,
+                'vigente_hasta'      => $item->vigente_hasta,
+                'status'      => $item->status,
+                'catalogs'    => $item->catalogs->map(function ($cat) {
+                    return [
+                        'catalog_id' => $cat->catalog_id,
+                        'name'       => $cat->name,
+                    ];
+                }),
+            ];
+        });
+    }
+    //*++++++++++++++++++++++  1. Obtener primero los vigentes y luego los no vigentes (ordenados)
+    public function getItemsOrderedByVigency()
+    {
+        return $this->itemRepository->getItemsOrderedByVigency();
+    }
+
+
+
+    public function getExpiredItems()
+    {
+        return $this->itemRepository->getExpiredItems();
+        // $today = Carbon::today()->toDateString();
+
+        // return Item::where('end', '<', $today)
+        //     ->with(['catalogs:catalog_id,name'])
+        //     ->get();
     }
 }

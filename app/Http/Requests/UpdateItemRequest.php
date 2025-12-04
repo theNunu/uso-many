@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateItemRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdateItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,21 @@ class UpdateItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'catalog_ids' => 'sometimes|array',
+            'catalog_ids.*' => 'exists:catalogs,catalog_id',
+            'vigente_desde' => 'sometimes|date',
+            'vigente_hasta' => 'sometimes|date|after:vigente_desde',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Errores de validación',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

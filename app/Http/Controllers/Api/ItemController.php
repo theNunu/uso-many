@@ -45,4 +45,31 @@ class ItemController extends Controller
         $this->itemService->delete($item);
         return response()->json(['message' => 'Deleted']);
     }
+
+    // GET /items/valid
+    public function getValidItems()
+    {
+        $items = $this->itemService->getValidItems();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $items
+        ], 200);
+    }
+
+public function expiredItems()
+{
+    return response()->json([
+        'success' => true,
+        'data' => $this->itemService->getExpiredItems()
+    ]);
+}
+
+public function orderedByVigency()
+{
+    return response()->json([
+        'success' => true,
+        'data' => $this->itemService->getItemsOrderedByVigency()
+    ]);
+}
 }
