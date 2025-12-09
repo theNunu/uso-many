@@ -20,6 +20,12 @@ Route::prefix('items')->group(function () {
 
     Route::post('/create', [ItemController::class, 'store']);
     Route::get('/{item}', [ItemController::class, 'show']);
+    Route::get('/catalog/{catalogId}', [ItemController::class, 'getItemByCatalog']);
     Route::put('/update/{item}', [ItemController::class, 'update']);
     Route::delete('/{item}', [ItemController::class, 'destroy']);
+});
+
+Route::prefix('comandos')->group(function () {
+    Route::post('{command_name}', [ItemController::class, 'probar']);
+
 });

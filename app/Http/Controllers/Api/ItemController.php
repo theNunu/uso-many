@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
 use App\Services\ItemService;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class ItemController extends Controller
 {
@@ -44,6 +45,27 @@ class ItemController extends Controller
     {
         $this->itemService->delete($item);
         return response()->json(['message' => 'Deleted']);
+    }
+
+
+    public function getItemByCatalog($catalogId){
+        return response()->json([
+            'success' => true,
+            'data' => $this->itemService->getItemByCatalog($catalogId)
+        ]);
+
+    }
+
+
+    public function probar($commnad_name){
+        try{
+            return $this->itemService->syncCatalogs($commnad_name);
+            // dd('tilinnnn');
+
+        }catch(ExceptionEvent){
+
+        }
+
     }
 
     // GET /items/valid
