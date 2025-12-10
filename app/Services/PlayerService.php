@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Player;
 use App\Repositories\PlayerRepository;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlayerService
 {
@@ -16,25 +17,47 @@ class PlayerService
 
     public function getAll()
     {
-        return $this->repo->getAll();
+        $players = $this->repo->getAll();
+        return $players->map(function ($player) {
+            return [
+                'player_id' => $player->player_id,
+                'player_name' => $player->name,
+                'age' => $player->age,
+                'position' => $player->position,
+                // careers mapeadas
+                'careers' => $player->careers->map(function ($career) {
+                    return [
+                        'career_id' => $career->career_id,
+                        'team' => $career->team
+                    ];
+                }),
+            ];
+        });
     }
 
     public function show($id)
     {
-        $player = $this->repo->find($id);
+        $player = Player::with('careers')->where('player_id', $id)->get();
 
-        if(!$player){
-            throw new  NotFoundResourceException('no existe el id del palyer');
+        if (!$player) {
+            throw new NotFoundHttpException('No existe el ID del player.');
         }
 
-        return $player;
-
-        return $player = [
-            'player_name' => $player->name,
-            'age' => $player->age,
-            'position' => $player->position,
-        ];
-        // return  $player;
+        return $player->map(function ($p) {
+            return [
+                'player_id' => $p->player_id,
+                'player_name' => $p->name,
+                'age' => $p->age,
+                'position' => $p->position,
+                // careers mapeadas
+                'careers' => $p->careers->map(function ($career) {
+                    return [
+                        'career_id' => $career->career_id,
+                        'team' => $career->team
+                    ];
+                }),
+            ];
+        });
     }
 
 

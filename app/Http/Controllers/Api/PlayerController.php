@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PlayerRequest;
 use App\Services\PlayerService;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlayerController extends Controller
 {
-       protected $service;
+    protected $service;
 
     public function __construct(PlayerService $service)
     {
@@ -21,11 +22,23 @@ class PlayerController extends Controller
         return response()->json($this->service->getAll());
     }
 
-    public function show($id){
-        return response()->json($this->service->show($id));
+    public function show($id)
+    {
+        try {
+            $player = $this->service->show($id);
 
+            return response()->json([
+                'success' => true,
+                'data' => $player
+            ], 200);
+        } catch (NotFoundHttpException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        }
     }
-
     public function store(PlayerRequest $request)
     {
         return response()->json($this->service->create($request->validated()), 201);
