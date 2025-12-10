@@ -61,7 +61,7 @@ class PlayerService
         });
     }
 
-    public function showByCareer($careerId) //obtener jugador pertenecienete a la carrera asignada
+    public function showByCareer($careerId) //obtener jugador pertenecienete a la carrera que busco(por idd)
     {
         $career = Career::with('player')->find($careerId);
 
@@ -84,6 +84,28 @@ class PlayerService
                 'position' => $career->player->position,
             ],
         ];
+    }
+
+    public function getAllCareersWithPlayers() //todas lass carreras on su jugador
+    {
+        // Cargamos careers + player
+        $careers = Career::with('player')->get();
+        // dd(' vas a refutar  o vas a llorar');
+
+        // Mapeamos para devolver un formato personalizado
+        return $careers->map(function ($career) {
+            return [
+                'career_id' => $career->career_id, // ajusta al nombre real
+                'team'      => $career->team,
+
+                'player' => $career->player ? [
+                    'player_id'   => $career->player->player_id,
+                    'name'        => $career->player->name,
+                    'age'         => $career->player->age,
+                    'position'    => $career->player->position,
+                ] : null
+            ];
+        });
     }
 
 

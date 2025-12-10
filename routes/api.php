@@ -35,8 +35,10 @@ Route::prefix('comandos')->group(function () {
 
 Route::prefix('players')->group(function () {
     Route::get('', [PlayerController::class, 'index']);
+    Route::get('career', [PlayerController::class, 'careersWithPlayers']);
     Route::get('{id}', [PlayerController::class, 'show']);
     Route::get('careers/{id}', [PlayerController::class, 'showByCareer']);
+    
     Route::post('', [PlayerController::class, 'store']);
     Route::put('{id}', [PlayerController::class, 'update']);
     Route::delete('{id}', [PlayerController::class, 'destroy']);
