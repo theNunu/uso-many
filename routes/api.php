@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CareerController;
 use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\PlayerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +29,20 @@ Route::prefix('items')->group(function () {
 
 Route::prefix('comandos')->group(function () {
     Route::post('{command_name}', [ItemController::class, 'probar']);
+});
 
+
+
+Route::prefix('players')->group(function () {
+    Route::get('', [PlayerController::class, 'index']);
+    Route::get('{id}', [PlayerController::class, 'show']);
+    Route::post('', [PlayerController::class, 'store']);
+    Route::put('{id}', [PlayerController::class, 'update']);
+    Route::delete('{id}', [PlayerController::class, 'destroy']);
+});
+
+Route::prefix('careers')->group(function () {
+    Route::post('', [CareerController::class, 'store']);
+    Route::put('{id}', [CareerController::class, 'update']);
+    Route::delete('{id}', [CareerController::class, 'destroy']);
 });
