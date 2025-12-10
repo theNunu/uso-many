@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Career extends Model
 {
+    protected $primaryKey = 'career_id';
     protected $fillable = [
         'player_id',
         'team',

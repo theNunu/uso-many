@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Career;
 use App\Models\Player;
 use App\Repositories\PlayerRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -58,6 +59,31 @@ class PlayerService
                 }),
             ];
         });
+    }
+
+    public function showByCareer($careerId) //obtener jugador pertenecienete a la carrera asignada
+    {
+        $career = Career::with('player')->find($careerId);
+
+        if (!$career) {
+            throw new NotFoundHttpException('No existe el ID career');
+        }
+
+        if (!$career->player) {
+            throw new NotFoundHttpException('Este career no tiene player asociado');
+        }
+
+        return [
+            'career_id' => $career->career_id,
+            'team' => $career->team,
+            'season' => $career->season,
+            'player' => [
+                'id' => $career->player->player_id,
+                'name' => $career->player->name,
+                'age' => $career->player->age,
+                'position' => $career->player->position,
+            ],
+        ];
     }
 
 

@@ -39,6 +39,24 @@ class PlayerController extends Controller
             ], 404);
         }
     }
+
+    public function showByCareer($careerId)
+    {
+        try {
+            $data = $this->service->showByCareer($careerId);
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (NotFoundHttpException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        }
+    }
     public function store(PlayerRequest $request)
     {
         return response()->json($this->service->create($request->validated()), 201);
